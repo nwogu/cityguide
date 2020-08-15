@@ -1,15 +1,35 @@
 package com.gabrielnwogu.cityguide;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 public class SecondFragment extends Fragment {
+
+    protected PreferenceManager pref;
 
     @Override
     public View onCreateView(
@@ -23,12 +43,39 @@ public class SecondFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        view.findViewById(R.id.button_second).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                NavHostFragment.findNavController(SecondFragment.this)
-                        .navigate(R.id.action_SecondFragment_to_FirstFragment);
+        this.pref = new PreferenceManager(getContext());
+
+        String mapsResponse = pref.getMapsResponse();
+
+        ArrayList<Place> data = new ArrayList<Place>();
+
+        try {
+            JSONObject obj = new JSONObject(mapsResponse);
+            JSONArray results = obj.getJSONArray("results");
+
+            for (int i = 0; i < results.length(); i++) {
+                String name = results.getJSONObject(i).getString("name");
+                String address = results.getJSONObject(i).getString("formatted_address");
+                JSONArray photos = results.getJSONObject(i).getJSONArray("photos");
+                String photo_reference = photos.getJSONObject(0).getString("photo_reference");
+                data.add(new Place(name, address, photo_reference));
             }
-        });
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
+        recyclerView.setHasFixedSize(true);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        CustomAdapter adapter = new CustomAdapter(data);
+        recyclerView.setAdapter(adapter);
+
+
     }
 }
