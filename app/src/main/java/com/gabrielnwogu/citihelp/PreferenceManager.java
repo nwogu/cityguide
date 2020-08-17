@@ -1,4 +1,4 @@
-package com.gabrielnwogu.cityguide;
+package com.gabrielnwogu.citihelp;
 
 import android.content.Context;
 import android.content.SharedPreferences;

@@ -1,4 +1,4 @@
-package com.gabrielnwogu.cityguide;
+package com.gabrielnwogu.citihelp;
 
 public class City {
 

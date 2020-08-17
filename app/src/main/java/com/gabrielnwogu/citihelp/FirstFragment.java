@@ -1,7 +1,6 @@
-package com.gabrielnwogu.cityguide;
+package com.gabrielnwogu.citihelp;
 
 import android.app.ProgressDialog;
-import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
